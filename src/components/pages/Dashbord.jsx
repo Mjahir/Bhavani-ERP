@@ -22,8 +22,12 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchInventory = async () => {
-      const querySnapshot = await getDocs(collection(db, "inventory"));
-      setInventory(querySnapshot.docs.map(doc => doc.data()));
+      try {
+        const querySnapshot = await getDocs(collection(db, "inventory"));
+        setInventory(querySnapshot.docs.map(doc => doc.data()));
+      } catch (error) {
+        console.error("Error fetching inventory:", error);
+      }
     };
     fetchInventory();
   }, []);
@@ -66,7 +70,7 @@ const Dashboard = () => {
         <>
           <div className="bg-gradient-to-r from-blue-500 to-teal-400 text-white p-6 rounded-lg shadow-lg mb-6">
             <h1 className="text-3xl font-bold mb-2">Welcome back, {user.email}!</h1>
-            <p className="text-lg">Role: {userRole || "proprietor"}</p>
+            <p className="text-lg">Role: {userRole || "N/A"}</p>
           </div>
           <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
             <h2 className="text-xl font-bold mb-4">Inventory Overview</h2>
