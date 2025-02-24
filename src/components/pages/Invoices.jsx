@@ -167,14 +167,14 @@ const Invoice = () => {
       <input type="text" placeholder="Customer GSTIN" className="border p-2 mb-4 w-full" value={customer.gstin} onChange={(e) => setCustomer({ ...customer, gstin: e.target.value })} />
       
       {items.map((item, index) => (
-        <div key={index} className="flex space-x-4 mb-2 items-center">
-          <input type="text" placeholder="Item Description" className="border p-2 w-1/6" value={item.description} onChange={(e) => updateItem(index, "description", e.target.value)} />
-          <input type="text" placeholder="HSN/SAC" className="border p-2 w-1/6" value={item.hsn} onChange={(e) => updateItem(index, "hsn", e.target.value)} />
-          <input type="number" placeholder="Qty (KG)" className="border p-2 w-1/6" value={item.quantity} onChange={(e) => updateItem(index, "quantity", Number(e.target.value))} />
-          <input type="number" placeholder="Price" className="border p-2 w-1/6" value={item.price} onChange={(e) => updateItem(index, "price", Number(e.target.value))} />
-          <input type="number" placeholder="Bags" className="border p-2 w-1/6" value={item.bags} onChange={(e) => updateItem(index, "bags", Number(e.target.value))} />
+        <div key={index} className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-2 items-center">
+          <input type="text" placeholder="Item Description" className="border p-2 w-full" value={item.description} onChange={(e) => updateItem(index, "description", e.target.value)} />
+          <input type="text" placeholder="HSN/SAC" className="border p-2 w-full" value={item.hsn} onChange={(e) => updateItem(index, "hsn", e.target.value)} />
+          <input type="number" placeholder="Qty (KG)" className="border p-2 w-full" value={item.quantity} onChange={(e) => updateItem(index, "quantity", Number(e.target.value))} />
+          <input type="number" placeholder="Price" className="border p-2 w-full" value={item.price} onChange={(e) => updateItem(index, "price", Number(e.target.value))} />
+          <input type="number" placeholder="Bags" className="border p-2 w-full" value={item.bags} onChange={(e) => updateItem(index, "bags", Number(e.target.value))} />
           <select
-            className="border p-2 w-1/6"
+            className="border p-2 w-full"
             value={item.type}
             onChange={(e) => updateItem(index, "type", e.target.value)}
           >
@@ -182,7 +182,7 @@ const Invoice = () => {
             <option value="KP">KP</option>
             <option value="P2">P2</option>
           </select>
-          <div className="w-1/6 text-sm">
+          <div className="w-full text-sm">
             {item.type && (
               <>
                 <div>Reduction: {calculateWeightReduction(item).toFixed(3)} KG</div>
