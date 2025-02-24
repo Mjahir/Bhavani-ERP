@@ -3,6 +3,7 @@ import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import { db } from "../firebase/firebase";
 import { collection, addDoc, doc, updateDoc, getDoc } from "firebase/firestore";
+import { Plus, FileText, ShoppingCart } from 'lucide-react'; // Remove FilePdf, update icon names
 
 const bankDetails = {
   name: "Central Bank of India A/c",
@@ -193,10 +194,18 @@ const Invoice = () => {
         </div>
       ))}
 
-      <button onClick={addItem} className="bg-blue-500 text-white px-4 py-2 rounded mt-2">+ Add Item</button>
-      <button onClick={handleCreateInvoice} className="bg-green-500 text-white px-4 py-2 rounded mt-4 w-full">Create Invoice</button>
-      <button onClick={handleAddPurchase} className="bg-yellow-500 text-white px-4 py-2 rounded mt-4 w-full">Add Purchase</button>
-      <button onClick={generatePDF} className="bg-purple-500 text-white px-4 py-2 rounded mt-4 w-full">Generate PDF</button>
+      <button onClick={addItem} className="bg-blue-500 text-white px-4 py-2 rounded mt-2 flex items-center">
+        <Plus className="mr-2" /> Add Item
+      </button>
+      <button onClick={handleCreateInvoice} className="bg-green-500 text-white px-4 py-2 rounded mt-4 w-full flex items-center justify-center">
+        <FileText className="mr-2" /> Create Invoice
+      </button>
+      <button onClick={handleAddPurchase} className="bg-yellow-500 text-white px-4 py-2 rounded mt-4 w-full flex items-center justify-center">
+        <ShoppingCart className="mr-2" /> Add Purchase
+      </button>
+      <button onClick={generatePDF} className="bg-purple-500 text-white px-4 py-2 rounded mt-4 w-full flex items-center justify-center">
+        <FileText className="mr-2" /> Generate PDF
+      </button>
     </div>
   );
 };
