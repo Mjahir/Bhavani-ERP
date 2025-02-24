@@ -16,14 +16,14 @@ const numberToWords = (num) => {
 };
 
 const Invoice = () => {
-  const [items, setItems] = useState([{ description: "", quantity: "", price: "", hsn: "", type: "" }]);
+  const [items, setItems] = useState([{ description: "", quantity: "", price: "", hsn: "", type: "", bags: 1 }]);
   const [customer, setCustomer] = useState({ name: "", address: "", gstin: "" });
   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [gst, setGst] = useState(18);
 
   const addItem = () => {
-    setItems([...items, { description: "", quantity: 1, price: 0, hsn: "", type: "" }]);
+    setItems([...items, { description: "", quantity: 1, price: 0, hsn: "", type: "", bags: 1 }]);
   };
 
   const updateItem = (index, key, value) => {
@@ -34,18 +34,18 @@ const Invoice = () => {
 
   const calculateAdjustedWeight = (item) => {
     if (item.type === "KP") {
-      return item.quantity - (0.700 * Math.floor(item.quantity));
+      return item.quantity - (0.700 * item.bags);
     } else if (item.type === "P2") {
-      return item.quantity - (0.300 * Math.floor(item.quantity));
+      return item.quantity - (0.300 * item.bags);
     }
     return item.quantity;
   };
 
   const calculateWeightReduction = (item) => {
     if (item.type === "KP") {
-      return 0.700 * Math.floor(item.quantity);
+      return 1.400 * item.bags;
     } else if (item.type === "P2") {
-      return 0.300 * Math.floor(item.quantity);
+      return 0.900 * item.bags;
     }
     return 0;
   };
@@ -128,12 +128,13 @@ const Invoice = () => {
 
     doc.autoTable({
       startY: 80,
-      head: [["Description", "HSN/SAC", "Qty (KG)", "Type", "Weight Reduction", "Adjusted Qty (KG)", "Rate", "Amount"]],
+      head: [["Description", "HSN/SAC", "Qty (KG)", "Type", "Bags", "Weight Reduction", "Adjusted Qty (KG)", "Rate", "Amount"]],
       body: items.map(item => [
         item.description,
         item.hsn,
         item.quantity,
         item.type,
+        item.bags,
         calculateWeightReduction(item).toFixed(3),
         calculateAdjustedWeight(item).toFixed(3),
         item.price,
@@ -167,11 +168,11 @@ const Invoice = () => {
       
       {items.map((item, index) => (
         <div key={index} className="flex space-x-4 mb-2 items-center">
-          <input type="text" placeholder="Item Description" className="border p-2 w-1/5" value={item.description} onChange={(e) => updateItem(index, "description", e.target.value)} />
+          <input type="text" placeholder="Item Description" className="border p-2 w-1/6" value={item.description} onChange={(e) => updateItem(index, "description", e.target.value)} />
           <input type="text" placeholder="HSN/SAC" className="border p-2 w-1/6" value={item.hsn} onChange={(e) => updateItem(index, "hsn", e.target.value)} />
           <input type="number" placeholder="Qty (KG)" className="border p-2 w-1/6" value={item.quantity} onChange={(e) => updateItem(index, "quantity", Number(e.target.value))} />
           <input type="number" placeholder="Price" className="border p-2 w-1/6" value={item.price} onChange={(e) => updateItem(index, "price", Number(e.target.value))} />
-         
+          <input type="number" placeholder="Bags" className="border p-2 w-1/6" value={item.bags} onChange={(e) => updateItem(index, "bags", Number(e.target.value))} />
           <select
             className="border p-2 w-1/6"
             value={item.type}
