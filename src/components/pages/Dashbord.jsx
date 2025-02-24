@@ -2,18 +2,7 @@ import { useEffect, useState } from "react";
 import { db } from "../firebase/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { Chart } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip as ChartTooltip,
-  Legend,
-} from "chart.js";
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, ChartTooltip, Legend);
+import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
 const Dashboard = () => {
   const [inventory, setInventory] = useState([]);
@@ -51,18 +40,10 @@ const Dashboard = () => {
     return () => unsubscribe(); // Cleanup on unmount
   }, []);
 
-  const chartData = {
-    labels: inventory.map(item => item.name),
-    datasets: [
-      {
-        label: 'Quantity',
-        data: inventory.map(item => item.quantity),
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1,
-      },
-    ],
-  };
+  const chartData = inventory.map(item => ({
+    name: item.name,
+    quantity: item.quantity
+  }));
 
   return (
     <div className="p-6">
@@ -74,7 +55,13 @@ const Dashboard = () => {
           </div>
           <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
             <h2 className="text-xl font-bold mb-4">Inventory Overview</h2>
-            <Chart type="bar" data={chartData} />
+            <BarChart width={500} height={300} data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="quantity" fill="#8884d8" />
+            </BarChart>
           </div>
         </>
       ) : (
