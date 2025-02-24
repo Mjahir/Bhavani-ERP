@@ -2,7 +2,18 @@ import { useEffect, useState } from "react";
 import { db } from "../firebase/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import { Chart } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip as ChartTooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, ChartTooltip, Legend);
 
 const Dashboard = () => {
   const [inventory, setInventory] = useState([]);
@@ -36,33 +47,40 @@ const Dashboard = () => {
     return () => unsubscribe(); // Cleanup on unmount
   }, []);
 
-  const chartData = inventory.map(item => ({
-    name: item.name,
-    quantity: item.quantity
-  }));
+  const chartData = {
+    labels: inventory.map(item => item.name),
+    datasets: [
+      {
+        label: 'Quantity',
+        data: inventory.map(item => item.quantity),
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1,
+      },
+    ],
+  };
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-
-      {user && (
-        <div className="bg-white shadow p-4 mb-4">
-          <h2 className="text-lg font-bold">User Details</h2>
-          <p><strong>Email:</strong> {user.email}</p>
-          <p><strong>Role:</strong> {userRole || "N/A"}</p>
+      {user ? (
+        <>
+          <div className="bg-gradient-to-r from-blue-500 to-teal-400 text-white p-6 rounded-lg shadow-lg mb-6">
+            <h1 className="text-3xl font-bold mb-2">Welcome back, {user.email}!</h1>
+            <p className="text-lg">Role: {userRole || "proprietor"}</p>
+          </div>
+          <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
+            <h2 className="text-xl font-bold mb-4">Inventory Overview</h2>
+            <Chart type="bar" data={chartData} />
+          </div>
+        </>
+      ) : (
+        <div className="text-center">
+          <h1 className="text-4xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-teal-400">
+            Welcome to Bhavani Metal Corporation
+          </h1>
+          <p className="text-xl text-gray-700">We will contact you soon.</p>
         </div>
       )}
-
-      <div className="bg-white shadow p-4">
-        <h2 className="text-lg font-bold">Inventory Overview</h2>
-        <BarChart width={500} height={300} data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Bar dataKey="quantity" fill="#8884d8" />
-        </BarChart>
-      </div>
     </div>
   );
 };
