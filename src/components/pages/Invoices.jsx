@@ -44,9 +44,9 @@ const Invoice = () => {
 
   const calculateWeightReduction = (item) => {
     if (item.type === "KP") {
-      return 1.400 * item.bags;
+      return 0.700 * item.bags;
     } else if (item.type === "P2") {
-      return 0.900 * item.bags;
+      return 0.300 * item.bags;
     }
     return 0;
   };
