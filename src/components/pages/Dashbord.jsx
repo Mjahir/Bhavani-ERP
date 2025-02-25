@@ -7,6 +7,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth"
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
 import { Home, User, BarChart2, Package, DollarSign, TrendingUp, ShoppingCart, Clock } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
+import Loader from "../Loader"
 
 const Dashboard = () => {
   const [inventory, setInventory] = useState([])
