@@ -61,9 +61,7 @@ const Sidebar = () => {
               <Link to="/login" className="flex items-center gap-2 p-2 rounded hover:bg-gray-700" onClick={handleLinkClick}>
                 <FiUser /> Login
               </Link>
-              <Link to="/signup" className="flex items-center gap-2 p-2 rounded hover:bg-gray-700" onClick={handleLinkClick}>
-                <FiUser /> Signup
-              </Link>
+              
             </>
           )}
         </nav>

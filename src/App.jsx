@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/pages/Dashbord";
 import Login from "./components/pages/Login";
-import Signup from "./components/pages/Signup";
 import Invoice from "./components/pages/Invoices"; 
 import Inventory from "./components/pages/Inventory";
 import Reports from "./components/pages/Reports";
@@ -19,7 +18,6 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
             <Route path="/invoice" element={<Invoice />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/reports" element={<Reports />} />
