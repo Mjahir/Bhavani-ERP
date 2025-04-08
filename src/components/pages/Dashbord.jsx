@@ -8,8 +8,10 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, PieChart, Pie, Cel
 import { Home, User, BarChart2, Package,  IndianRupee, TrendingUp, ShoppingCart, Clock } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import Loader from "../Loader"
+import { useNavigate } from "react-router-dom"
 
 const Dashboard = () => {
+  const navigate = useNavigate()
   const [inventory, setInventory] = useState([])
   const [user, setUser] = useState(null)
   const [userRole, setUserRole] = useState(null)
@@ -97,7 +99,8 @@ const Dashboard = () => {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Inventory Items</CardTitle>
+                <CardTitle className="text-sm font-medium"><button onClick={() => navigate("/inventory")}>Inventory Items</button>
+                </CardTitle>
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>

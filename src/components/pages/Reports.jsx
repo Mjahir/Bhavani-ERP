@@ -10,10 +10,19 @@ const Reports = () => {
     const fetchData = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "inventory"));
-        const inventoryData = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const inventoryData = querySnapshot.docs.map((doc) => {
+          const item = { id: doc.id, ...doc.data() };
+
+          return {
+            id: item.id,
+            name: item.name || "Unknown",  // Ensure name is always displayed
+            selling_price: item.selling_price > 0 ? item.selling_price : "N/A", // Show 'N/A' if not sold
+            purchase_price: item.purchase_price || "N/A",
+            hsn: item.hsn || "N/A",
+            quantity: item.quantity || "0",
+          };
+        });
+
         setData(inventoryData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -39,28 +48,29 @@ const Reports = () => {
         <table className="min-w-full bg-white border">
           <thead>
             <tr className="bg-gray-200 text-left">
-              {data.length > 0 &&
-                Object.keys(data[0]).map((key) => (
-                  <th key={key} className="px-4 py-2 border">{key}</th>
-                ))}
+              <th className="px-4 py-2 border">ID</th>
+              <th className="px-4 py-2 border">Name</th>
+              <th className="px-4 py-2 border">Selling Price</th>
+              <th className="px-4 py-2 border">Purchase Price</th>
+              <th className="px-4 py-2 border">HSN</th>
+              <th className="px-4 py-2 border">Quantity</th>
             </tr>
           </thead>
           <tbody>
             {data.length > 0 ? (
               data.map((item, index) => (
                 <tr key={index} className="border">
-                  {Object.values(item).map((value, i) => (
-                    <td key={i} className="px-4 py-2 border">
-                      {typeof value === "object" && value.seconds
-                        ? new Date(value.seconds * 1000).toLocaleString() // Convert Firestore Timestamp
-                        : value}
-                    </td>
-                  ))}
+                  <td className="px-4 py-2 border">{item.id}</td>
+                  <td className="px-4 py-2 border">{item.name}</td>
+                  <td className="px-4 py-2 border">{item.selling_price}</td>
+                  <td className="px-4 py-2 border">{item.purchase_price}</td>
+                  <td className="px-4 py-2 border">{item.hsn}</td>
+                  <td className="px-4 py-2 border">{item.quantity}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={data.length > 0 ? Object.keys(data[0]).length : 1} className="text-center py-4">
+                <td colSpan="6" className="text-center py-4">
                   No data available
                 </td>
               </tr>

@@ -33,18 +33,55 @@ const Inventory = () => {
     setNewItem({ ...newItem, [e.target.name]: e.target.value })
   }
 
+  // Update the handleUpdateInventory function to properly handle empty selling_price
   const handleUpdateInventory = async (id, updatedItem) => {
     try {
-      await updateDoc(doc(db, "inventory", id), updatedItem)
-      setInventory(inventory.map((item) => (item.id === id ? { id, ...updatedItem } : item)))
+      // Create a copy of the updatedItem to modify
+      const itemToUpdate = { ...updatedItem }
+
+      // If selling_price is empty string, remove it from the update object
+      if (
+        itemToUpdate.selling_price === "" ||
+        itemToUpdate.selling_price === null ||
+        itemToUpdate.selling_price === undefined
+      ) {
+        delete itemToUpdate.selling_price
+      } else if (itemToUpdate.selling_price) {
+        // Only convert to number if it exists
+        itemToUpdate.selling_price = Number(itemToUpdate.selling_price)
+      }
+
+      await updateDoc(doc(db, "inventory", id), itemToUpdate)
+
+      // Update the local state to reflect the changes
+      setInventory(
+        inventory.map((item) => {
+          if (item.id === id) {
+            // If selling_price is empty, remove it from the item
+            if (
+              updatedItem.selling_price === "" ||
+              updatedItem.selling_price === null ||
+              updatedItem.selling_price === undefined
+            ) {
+              const newItem = { ...updatedItem }
+              delete newItem.selling_price
+              return { id, ...newItem }
+            }
+            return { id, ...updatedItem }
+          }
+          return item
+        }),
+      )
     } catch (error) {
       console.error("Error updating item:", error)
     }
   }
 
+  // Update the handleAddItem function to better handle the selling_price field
   const handleAddItem = async () => {
-    if (!newItem.name || !newItem.quantity || !newItem.selling_price) {
-      alert("Please fill all fields.")
+    // Only require name and quantity
+    if (!newItem.name || !newItem.quantity) {
+      alert("Please fill name and quantity fields.")
       return
     }
 
@@ -55,28 +92,47 @@ const Inventory = () => {
       if (!querySnapshot.empty) {
         const existingItem = querySnapshot.docs[0]
         const currentQuantity = existingItem.data().quantity || 0
-        await updateDoc(doc(db, "inventory", existingItem.id), {
+
+        // Create update object
+        const updateData = {
           quantity: currentQuantity + Number(newItem.quantity),
-          selling_price: Number(newItem.selling_price),
-        })
+        }
+
+        // Only add selling_price if it's provided and not empty
+        if (newItem.selling_price && newItem.selling_price.trim() !== "") {
+          updateData.selling_price = Number(newItem.selling_price)
+        }
+
+        await updateDoc(doc(db, "inventory", existingItem.id), updateData)
+
+        // Update local state
         setInventory(
           inventory.map((item) =>
             item.id === existingItem.id
               ? {
                   ...item,
                   quantity: currentQuantity + Number(newItem.quantity),
-                  selling_price: Number(newItem.selling_price),
+                  ...(newItem.selling_price && newItem.selling_price.trim() !== ""
+                    ? { selling_price: Number(newItem.selling_price) }
+                    : {}),
                 }
               : item,
           ),
         )
       } else {
-        const docRef = await addDoc(collection(db, "inventory"), {
+        // Create new item object
+        const newItemData = {
           name: newItem.name,
           quantity: Number(newItem.quantity),
-          selling_price: Number(newItem.selling_price),
-        })
-        setInventory([...inventory, { id: docRef.id, ...newItem }])
+        }
+
+        // Only add selling_price if it's provided and not empty
+        if (newItem.selling_price && newItem.selling_price.trim() !== "") {
+          newItemData.selling_price = Number(newItem.selling_price)
+        }
+
+        const docRef = await addDoc(collection(db, "inventory"), newItemData)
+        setInventory([...inventory, { id: docRef.id, ...newItemData }])
       }
 
       setNewItem({ name: "", quantity: "", selling_price: "" })
@@ -121,7 +177,7 @@ const Inventory = () => {
         <input
           type="number"
           name="selling_price"
-          placeholder="Selling Price"
+          placeholder="Selling Price (Optional)"
           className="border p-2"
           value={newItem.selling_price}
           onChange={handleInputChange}
@@ -172,8 +228,15 @@ const Inventory = () => {
                 <input
                   type="number"
                   className="border p-1 w-full"
-                  value={item.selling_price}
-                  onChange={(e) => handleUpdateInventory(item.id, { ...item, selling_price: Number(e.target.value) })}
+                  value={item.selling_price || ""}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    // If value is empty, set selling_price to empty string to trigger removal
+                    handleUpdateInventory(item.id, {
+                      ...item,
+                      selling_price: value === "" ? "" : Number(value),
+                    })
+                  }}
                 />
               </td>
               <td className="px-4 py-2 flex space-x-2">
@@ -189,5 +252,6 @@ const Inventory = () => {
   )
 }
 
-export default Inventory
+export default Inventory 
+
 

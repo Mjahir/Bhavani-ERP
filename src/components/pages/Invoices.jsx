@@ -7,11 +7,15 @@ import { db } from "../firebase/firebase"
 import { collection, addDoc, doc, updateDoc, getDocs, query, where } from "firebase/firestore"
 import { Plus, FileText, ShoppingCart } from "lucide-react" // Remove FilePdf, update icon names
 
+
+
+
+
 const bankDetails = {
   name: "Central Bank of India A/c",
   accountNumber: "1312408781",
   ifsc: "CBIN0284851",
-  branch: "Nagheedi Jamnagar",
+  branch: "Naghedi Jamnagar",
 }
 
 const numberToWords = (num) => {
@@ -57,6 +61,8 @@ const Invoice = () => {
   const gstAmount = (subtotal * gst) / 100
   const total = subtotal + gstAmount
 
+  
+
   const handleCreateInvoice = async () => {
     try {
       // Create the invoice
@@ -86,6 +92,8 @@ const Invoice = () => {
           })
         }
       }
+
+     
 
       alert("Invoice Created & Inventory Updated")
       // Reset form or navigate to a new page
@@ -119,7 +127,7 @@ const Invoice = () => {
             quantity: calculateAdjustedWeight(item),
             hsn: item.hsn,
             purchase_price: item.price,
-            selling_price: item.price * 1.1,
+            // selling_price: item.price * 1.1,
           })
         }
       }
@@ -213,11 +221,14 @@ const Invoice = () => {
       />
       <input
         type="text"
+        maxLength={'15'}
         placeholder="Customer GSTIN"
         className="border p-2 mb-4 w-full"
         value={customer.gstin}
         onChange={(e) => setCustomer({ ...customer, gstin: e.target.value })}
+        
       />
+ 
 
       {items.map((item, index) => (
         <div key={index} className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-2 items-center">
@@ -297,6 +308,8 @@ const Invoice = () => {
       >
         <FileText className="mr-2" /> Generate PDF
       </button>
+
+
     </div>
   )
 }
